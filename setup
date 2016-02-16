@@ -1,0 +1,63 @@
+#!/usr/bin/env node
+'use strict';
+
+var _ = require('lodash');
+var LamassuConfig = require('lamassu-config');
+var promptly = require('promptly');
+var psql = process.env.DATABASE_URL || 'postgres://lamassu:lamassu@localhost/lamassu';
+
+var config = new LamassuConfig(psql);
+
+console.log('\nSetting up the Dash wallet and trading plugin using Poloniex.\n');
+console.log('Please enter your API credentials.\n');
+promptly.prompt('API Key: ', function(keyErr, key) {
+  promptly.password('API Secret: ', function(secretErr, secret) {
+    updateDb(key, secret, function(err) {
+      if (err) throw err;
+      console.log('\nSuccess.');
+    });
+  });
+});
+
+function updateDb(key, secret, callback) {
+  var newConfig = {
+    exchanges: {
+      settings: {
+        DASH: {
+          commission: 1.0
+        }
+      },
+      plugins: {
+        coins: ["BTC", "DASH"],
+        settings: {
+          dash: {
+            guid: key,
+            password: secret,
+            fromAddress: '',
+            key: key,
+            clientId: '',
+            secret: secret
+          }
+        },
+        current: {
+          DASH: {
+            ticker: 'dash',
+            transfer: 'dash',
+            wallet: 'dash',
+            trade: 'dash'
+          }
+        }
+      }
+    }
+  };
+
+  config.readExchangesConfig(function (err, res) {
+    if (err) return callback(err);
+    _.merge(res, newConfig);
+    config.saveExchangesConfig(res, function (err) {
+      if (err) return callback(err);
+      config.end();
+      callback(null);
+    });
+  });
+}
