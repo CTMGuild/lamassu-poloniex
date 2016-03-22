@@ -23,14 +23,12 @@ function updateDb(key, secret, callback) {
   var newConfig = {
     exchanges: {
       settings: {
-        DASH: {
-          commission: 1.0
-        }
+        DASHcommission: 1.0
       },
       plugins: {
-        coins: ["BTC", "DASH"],
+        coins: {"BTC": true, "DASH": true},
         settings: {
-          dash: {
+          poloniex: {
             guid: key,
             password: secret,
             fromAddress: '',
@@ -40,12 +38,10 @@ function updateDb(key, secret, callback) {
           }
         },
         current: {
-          DASH: {
-            ticker: 'dash',
-            transfer: 'dash',
-            wallet: 'dash',
-            trade: 'dash'
-          }
+          DASHticker: 'poloniex',
+          DASHtransfer: 'poloniex',
+          DASHwallet: 'poloniex',
+          DASHtrade: 'poloniex'
         }
       }
     }
