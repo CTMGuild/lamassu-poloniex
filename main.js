@@ -8,7 +8,7 @@ var wallet = require('./lib/wallet');
 var plugin_cfg = {};
 
 module.exports = {
-  NAME: 'Dash',
+  NAME: 'Poloniex',
   COIN: 'DASH',
   SUPPORTED_MODULES: ['ticker', 'trader', 'wallet'],
   config: function(local_cfg) {
